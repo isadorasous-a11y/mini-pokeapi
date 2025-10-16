@@ -1,13 +1,20 @@
+# app/main.py
 from fastapi import FastAPI
-from app.db import Base, engine
+from fastapi.responses import JSONResponse
 from app.routers import pokemons
 
-app = FastAPI(title="Mini PokeAPI EBAC", version="1.0.0")
+app = FastAPI(
+    title="Mini-PokeAPI",
+    version="1.0.0",
+)
 
-app.include_router(pokemons.router)
+@app.get("/", include_in_schema=False)
+def root():
+    return {"message": "Mini-PokeAPI online. Veja /docs para a documentação."}
 
-@app.get("/healthz")
+@app.get("/healthz", include_in_schema=False)
 def healthz():
     return {"status": "ok"}
 
-Base.metadata.create_all(bind=engine)
+# Rotas de negócio
+app.include_router(pokemons.router)
